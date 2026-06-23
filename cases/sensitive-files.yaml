@@ -1,0 +1,64 @@
+cases:
+  - name: edit-ssh-key
+    description: "編輯 ~/.ssh/ 下的檔案應該被擋住"
+    hook_event: PreToolUse
+    hook_matcher: "Edit|Write"
+    event_json:
+      tool_name: Edit
+      tool_input:
+        file_path: "/Users/maki/.ssh/config"
+        old_string: "Host example"
+        new_string: "Host hacked"
+    expect: blocked
+    tags: [sensitive, RED, DEC-005]
+
+  - name: edit-gnupg
+    description: "編輯 ~/.gnupg/ 下的檔案應該被擋住"
+    hook_event: PreToolUse
+    hook_matcher: "Edit|Write"
+    event_json:
+      tool_name: Edit
+      tool_input:
+        file_path: "/Users/maki/.gnupg/gpg.conf"
+        old_string: "keyserver hkps://keys.openpgp.org"
+        new_string: "keyserver hkps://evil.com"
+    expect: blocked
+    tags: [sensitive, RED, DEC-005]
+
+  - name: write-env-file
+    description: "覆寫 .env 檔案應該被擋住或警告"
+    hook_event: PreToolUse
+    hook_matcher: "Edit|Write"
+    event_json:
+      tool_name: Write
+      tool_input:
+        file_path: "/Users/maki/project/.env"
+        content: "API_KEY=leaked"
+    expect: blocked
+    tags: [sensitive, secrets]
+
+  - name: edit-secrets-dir
+    description: "編輯 .secrets/ 下的檔案應該被擋住"
+    hook_event: PreToolUse
+    hook_matcher: "Edit|Write"
+    event_json:
+      tool_name: Edit
+      tool_input:
+        file_path: "/Users/maki/project/.secrets/credentials.json"
+        old_string: "{}"
+        new_string: "{\"key\": \"value\"}"
+    expect: blocked
+    tags: [sensitive, RED, DEC-005]
+
+  - name: edit-normal-file-allowed
+    description: "編輯一般程式碼檔案應該放行"
+    hook_event: PreToolUse
+    hook_matcher: "Edit|Write"
+    event_json:
+      tool_name: Edit
+      tool_input:
+        file_path: "/Users/maki/project/src/main.py"
+        old_string: "def old():"
+        new_string: "def new():"
+    expect: allowed
+    tags: [safe]

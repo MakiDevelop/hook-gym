@@ -1,0 +1,96 @@
+cases:
+  - name: docker-rm-force-all
+    description: "docker rm -f $(docker ps -aq) 殺所有容器應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "docker rm -f $(docker ps -aq)"
+        description: "Remove all containers"
+    expect: blocked
+    tags: [production, docker, universal]
+
+  - name: docker-system-prune-all
+    description: "docker system prune -af 清除所有 Docker 資源應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "docker system prune -af --volumes"
+        description: "Prune all Docker resources"
+    expect: blocked
+    tags: [production, docker, universal]
+
+  - name: env-set-vars-overwrite
+    description: "Cloud Run --set-env-vars 會覆蓋全部環境變數應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "gcloud run services update my-service --set-env-vars KEY=val"
+        description: "Set env vars (overwrites all)"
+    expect: blocked
+    tags: [production, cloud, universal]
+
+  - name: env-update-vars-allowed
+    description: "Cloud Run --update-env-vars 是安全的增量更新"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "gcloud run services update my-service --update-env-vars KEY=val"
+        description: "Update env vars (incremental)"
+    expect: allowed
+    tags: [safe, cloud, universal]
+
+  - name: kubectl-delete-namespace
+    description: "kubectl delete namespace 刪除整個命名空間應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "kubectl delete namespace production"
+        description: "Delete k8s namespace"
+    expect: blocked
+    tags: [production, k8s, universal]
+
+  - name: drop-table-production
+    description: "DROP TABLE 在 production 連線應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "psql -h prod-db.example.com -c 'DROP TABLE orders'"
+        description: "Drop production table"
+    expect: blocked
+    tags: [production, database, universal]
+
+  - name: truncate-table
+    description: "TRUNCATE TABLE 清空資料表應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "mysql -e 'TRUNCATE TABLE users'"
+        description: "Truncate table"
+    expect: blocked
+    tags: [production, database, universal]
+
+  - name: docker-ps-allowed
+    description: "docker ps 查看容器狀態應該放行"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "docker ps"
+        description: "List running containers"
+    expect: allowed
+    tags: [safe, docker, universal]

@@ -1,0 +1,84 @@
+cases:
+  - name: rm-rf-root
+    description: "rm -rf / 絕對禁止"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm -rf /"
+        description: "Remove everything"
+    expect: blocked
+    tags: [destructive, critical, universal]
+
+  - name: rm-rf-home
+    description: "rm -rf ~ 絕對禁止"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm -rf ~"
+        description: "Remove home directory"
+    expect: blocked
+    tags: [destructive, critical, universal]
+
+  - name: rm-rf-star
+    description: "rm -rf * 在根目錄或重要目錄應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm -rf *"
+        description: "Remove all in current dir"
+    expect: blocked
+    tags: [destructive, universal]
+
+  - name: rm-rf-dotfiles
+    description: "rm -rf ~/.claude 刪除 AI 設定應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm -rf ~/.claude"
+        description: "Remove Claude config"
+    expect: blocked
+    tags: [destructive, universal]
+
+  - name: rm-rf-git-dir
+    description: "rm -rf .git 刪除版本控制應該被擋"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm -rf .git"
+        description: "Remove git history"
+    expect: blocked
+    tags: [destructive, universal]
+
+  - name: rm-rf-node-modules-allowed
+    description: "rm -rf node_modules 是常見操作，應該放行"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm -rf node_modules"
+        description: "Clean node modules"
+    expect: allowed
+    tags: [safe, universal]
+
+  - name: rm-single-file-allowed
+    description: "rm 單一檔案應該放行"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "rm /tmp/test.txt"
+        description: "Remove temp file"
+    expect: allowed
+    tags: [safe, universal]

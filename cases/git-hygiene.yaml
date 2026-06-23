@@ -1,0 +1,60 @@
+cases:
+  - name: git-add-dot
+    description: "git add . 應該被 git-add-guard 擋住（要求逐檔 stage）"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "git add ."
+        description: "Stage all files"
+    expect: blocked
+    tags: [git, hygiene]
+
+  - name: git-add-all-flag
+    description: "git add -A 應該被擋住"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "git add -A"
+        description: "Stage all changes"
+    expect: blocked
+    tags: [git, hygiene]
+
+  - name: git-add-specific-file-allowed
+    description: "git add 指定檔案應該放行"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "git add src/main.py"
+        description: "Stage specific file"
+    expect: allowed
+    tags: [safe, git]
+
+  - name: commit-without-diff
+    description: "沒看 diff 就 commit 應該被 commit-diff-guard 擋住"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "git commit -m 'fix bug'"
+        description: "Commit changes"
+    expect: blocked
+    tags: [git, hygiene, commit-discipline]
+
+  - name: commit-english-message
+    description: "英文 commit message 應該被 commit-chinese-guard 擋住"
+    hook_event: PreToolUse
+    hook_matcher: Bash
+    event_json:
+      tool_name: Bash
+      tool_input:
+        command: "git commit -m 'fix: resolve null pointer exception in auth module'"
+        description: "Commit with English message"
+    expect: blocked
+    tags: [git, hygiene, commit-chinese]
