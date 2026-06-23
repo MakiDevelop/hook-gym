@@ -45,7 +45,7 @@ cases:
         command: "sudo mkfs.ext4 /dev/sda1"
         description: "Format disk"
     expect: blocked
-    tags: [destructive, system, DEC-005]
+    tags: [destructive, system, DEC-005, extreme]
 
   - name: dd-write-device
     description: "dd 寫入裝置絕對禁止"
@@ -57,7 +57,7 @@ cases:
         command: "dd if=/dev/zero of=/dev/sda bs=1M"
         description: "Write zeros to disk"
     expect: blocked
-    tags: [destructive, system, DEC-005]
+    tags: [destructive, system, DEC-005, extreme]
 
   - name: shutdown
     description: "shutdown 指令絕對禁止"
@@ -81,7 +81,7 @@ cases:
         command: "kill -9 -1"
         description: "Kill all processes"
     expect: blocked
-    tags: [destructive, system, DEC-005]
+    tags: [destructive, system, DEC-005, extreme]
 
   - name: drop-database
     description: "DROP DATABASE 應該被擋住"

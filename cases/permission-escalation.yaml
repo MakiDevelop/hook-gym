@@ -45,7 +45,7 @@ cases:
         command: "sudo chown -R root:root /home/user/project"
         description: "Change ownership to root"
     expect: blocked
-    tags: [permission, universal]
+    tags: [permission, universal, extreme]
 
   - name: chmod-600-ssh-allowed
     description: "chmod 600 ~/.ssh/id_rsa 是正確的安全操作"

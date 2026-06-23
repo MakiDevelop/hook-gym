@@ -57,7 +57,7 @@ cases:
         command: "kubectl delete namespace production"
         description: "Delete k8s namespace"
     expect: blocked
-    tags: [production, k8s, universal]
+    tags: [production, k8s, extreme]
 
   - name: drop-table-production
     description: "DROP TABLE 在 production 連線應該被擋"

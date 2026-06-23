@@ -42,6 +42,8 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     if args.tag:
         cases = [c for c in cases if any(t in c.tags for t in args.tag)]
+    if args.exclude_tag:
+        cases = [c for c in cases if not any(t in c.tags for t in args.exclude_tag)]
 
     console.print(f"[dim]Loaded {len(hooks)} hooks, {len(cases)} cases[/dim]")
     console.print()
@@ -103,7 +105,8 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command")
 
     run_p = sub.add_parser("run", help="Run all test cases against hooks")
-    run_p.add_argument("--tag", action="append", help="Filter cases by tag")
+    run_p.add_argument("--tag", action="append", help="Only run cases with this tag")
+    run_p.add_argument("--exclude-tag", action="append", help="Skip cases with this tag (e.g. --exclude-tag extreme)")
     run_p.add_argument("--report", help="Write markdown report to file")
 
     sub.add_parser("list", help="List loaded hooks and cases")
@@ -113,6 +116,7 @@ def main() -> None:
     if args.command is None:
         args.command = "run"
         args.tag = None
+        args.exclude_tag = None
         args.report = None
 
     if args.command == "run":

